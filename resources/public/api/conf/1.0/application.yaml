@@ -188,6 +188,8 @@ paths:
           description: Invalid Request
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid JSON:
                   $ref: "#/components/examples/errors.InvalidJson"
@@ -375,6 +377,8 @@ paths:
           description: Invalid Request
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Incorrect Header Value:
                   $ref: "#/components/examples/errors.IncorrectHeaderValue"
@@ -908,6 +912,8 @@ paths:
           description: Bad Request
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid Json:
                   $ref: "#/components/examples/errors.InvalidJson"
@@ -995,6 +1001,8 @@ paths:
           description: Internal Server Error
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Generic Server Error:
                   $ref: "#/components/examples/errors.Submission.GenericServerError"
@@ -1002,6 +1010,8 @@ paths:
           description: Forbidden
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
@@ -1009,6 +1019,8 @@ paths:
           description: Business Validation Failure
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
@@ -1018,6 +1030,8 @@ paths:
           description: Unauthorized
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Missing Credentials:
                   $ref: "#/components/examples/errors.MissingCredentials"
@@ -1027,6 +1041,8 @@ paths:
           description: Invalid Request
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid Date Range:
                   $ref: "#/components/examples/errors.InvalidDateRange"
