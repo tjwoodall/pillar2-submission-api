@@ -1750,7 +1750,7 @@ paths:
         </tbody>
         </table>
       security:
-      - userRestricted:
+      - User-Restricted:
         - read:pillar2
 components:
   schemas:
