@@ -556,7 +556,7 @@ paths:
                 No Subscription Data:
                   $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
       security:
-      - userRestricted:
+      - User-Restricted:
         - write:pillar2
     delete:
       operationId: deleteGIR
@@ -620,7 +620,7 @@ paths:
                 No Subscription Data:
                   $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
       security:
-      - userRestricted:
+      - User-Restricted:
         - write:pillar2
   /organisations/pillar-two/uk-tax-return:
     post:
