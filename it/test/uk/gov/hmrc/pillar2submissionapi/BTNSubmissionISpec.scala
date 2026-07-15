@@ -48,10 +48,10 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 
 trait BTNSubmissionBehaviours extends IntegrationSpecBase with OptionValues {
 
-  lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
-  lazy val client:   HttpClientV2         = provider.get()
-  lazy val str = s"http://localhost:$port${routes.BTNSubmissionController.submitBTN.url}"
-  lazy val baseRequest: RequestBuilder =
+  lazy val provider:    HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
+  lazy val client:      HttpClientV2         = provider.get()
+  lazy val str:         String               = s"http://localhost:$port${routes.BTNSubmissionController.submitBTN.url}"
+  lazy val baseRequest: RequestBuilder       =
     client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
 
   private val submitUrl = "/report-pillar2-top-up-taxes/below-threshold-notification/submit"
@@ -59,7 +59,7 @@ trait BTNSubmissionBehaviours extends IntegrationSpecBase with OptionValues {
   def getSubscriptionStub: StubMapping = {
     val v2Enabled = app.configuration.getOptional[Boolean]("features.readSubscriptionV2Enabled").getOrElse(false)
 
-    if (v2Enabled) {
+    if v2Enabled then {
       stubGet(s"$readSubscriptionV2Path/$plrReference", OK, subscriptionSuccessV2Json.toString)
     } else {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)

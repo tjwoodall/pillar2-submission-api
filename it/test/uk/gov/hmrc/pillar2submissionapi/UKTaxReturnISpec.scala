@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, putRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -25,6 +25,7 @@ import org.scalatest.OptionValues
 import play.api.Application
 import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.User
 import uk.gov.hmrc.auth.core.retrieve.Credentials
@@ -39,7 +40,6 @@ import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.services.UKTRSubmitErrorResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
-import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 
 import java.net.URI
 import scala.concurrent.duration.DurationInt
@@ -59,7 +59,7 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
   def getSubscriptionStub: StubMapping = {
     val v2Enabled = app.configuration.getOptional[Boolean]("features.readSubscriptionV2Enabled").getOrElse(false)
 
-    if (v2Enabled) {
+    if v2Enabled then {
       stubGet(s"$readSubscriptionV2Path/$plrReference", OK, subscriptionSuccessV2Json.toString)
     } else {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
