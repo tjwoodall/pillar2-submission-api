@@ -16,21 +16,26 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
+import play.api.Logging
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AccountActivityConnector @Inject() (config: AppConfig, httpClient: HttpClientV2)(using ExecutionContext) {
+class AccountActivityConnector @Inject() (config: AppConfig, httpClient: HttpClientV2)(using ExecutionContext) extends Logging {
 
   def getAccountActivity(fromDate: LocalDate, toDate: LocalDate)(using HeaderCarrier): Future[HttpResponse] = {
     val url = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/account-activity?fromDate=$fromDate&toDate=$toDate"
 
-    httpClient.get(url).execute[HttpResponse]
+    httpClient.get(url).execute[HttpResponse].recoverWith { case exception =>
+      logger.error("[AccountActivityConnector] Failed to retrieve account activity", exception)
+      Future.failed(UnexpectedResponseError)
+    }
   }
 
 }

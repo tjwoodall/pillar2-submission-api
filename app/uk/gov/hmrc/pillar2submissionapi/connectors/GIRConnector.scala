@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSubmission
 
 import java.net.URI
@@ -45,6 +46,10 @@ class GIRConnector @Inject() (
       .post(URI.create(globeInformationReturnUrl).toURL)
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[GIRConnector] Failed to create GIR", exception)
+        Future.failed(UnexpectedResponseError)
+      }
   }
 
   def amendGIR(request: GIRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
@@ -54,6 +59,10 @@ class GIRConnector @Inject() (
       .put(URI.create(globeInformationReturnUrl).toURL)
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[GIRConnector] Failed to amend GIR", exception)
+        Future.failed(UnexpectedResponseError)
+      }
   }
 
   def deleteGIR(request: GIRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
@@ -63,6 +72,10 @@ class GIRConnector @Inject() (
       .delete(URI.create(globeInformationReturnUrl).toURL)
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[GIRConnector] Failed to delete GIR", exception)
+        Future.failed(UnexpectedResponseError)
+      }
   }
 
 }

@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.*
 
 import java.net.URI
@@ -43,42 +44,56 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
     plrReference: String
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionData]] = {
     val url = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
-    http.get(URI.create(url).toURL).execute[HttpResponse].map {
-      case httpResponse if httpResponse.status == 200 =>
-        httpResponse.json
-          .validate[SubscriptionSuccess]
-          .fold(
-            errors => {
-              logger.warn(s"Failed to parse read subscription (V1) response: $errors")
-              Left(BadRequest)
-            },
-            parsedSubscriptionSuccess => Right(parsedSubscriptionSuccess.success)
-          )
-      case resp =>
-        logger.warn(s"Connection issue when calling read subscription (V1) with status: ${resp.status}")
-        Left(BadRequest)
-    }
+    http
+      .get(URI.create(url).toURL)
+      .execute[HttpResponse]
+      .map {
+        case httpResponse if httpResponse.status == 200 =>
+          httpResponse.json
+            .validate[SubscriptionSuccess]
+            .fold(
+              errors => {
+                logger.warn(s"[SubscriptionConnector] Failed to parse read subscription (V1) response: $errors")
+                Left(BadRequest)
+              },
+              parsedSubscriptionSuccess => Right(parsedSubscriptionSuccess.success)
+            )
+        case resp =>
+          logger.warn(s"Connection issue when calling read subscription (V1) with status: ${resp.status}")
+          Left(BadRequest)
+      }
+      .recoverWith { case exception =>
+        logger.error("[SubscriptionConnector] Failed to read subscription data", exception)
+        Future.failed(UnexpectedResponseError)
+      }
   }
 
   private def readSubscriptionDataV2(
     plrReference: String
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionDataV2]] = {
     val url = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/read-subscription/$plrReference"
-    http.get(URI.create(url).toURL).execute[HttpResponse].map {
-      case httpResponse if httpResponse.status == 200 =>
-        httpResponse.json
-          .validate[SubscriptionSuccessV2]
-          .fold(
-            errors => {
-              logger.warn(s"Failed to parse read subscription (V2) response: $errors")
-              Left(BadRequest)
-            },
-            parsedSubscriptionSuccessV2 => Right(parsedSubscriptionSuccessV2.success)
-          )
-      case resp =>
-        logger.warn(s"Connection issue when calling read subscription (V2) with status: ${resp.status}")
-        Left(BadRequest)
-    }
+    http
+      .get(URI.create(url).toURL)
+      .execute[HttpResponse]
+      .map {
+        case httpResponse if httpResponse.status == 200 =>
+          httpResponse.json
+            .validate[SubscriptionSuccessV2]
+            .fold(
+              errors => {
+                logger.warn(s"[SubscriptionConnector] Failed to parse read subscription (V2) response: $errors")
+                Left(BadRequest)
+              },
+              parsedSubscriptionSuccessV2 => Right(parsedSubscriptionSuccessV2.success)
+            )
+        case resp =>
+          logger.warn(s"[SubscriptionConnector] Connection issue when calling read subscription (V2) with status: ${resp.status}")
+          Left(BadRequest)
+      }
+      .recoverWith { case exception =>
+        logger.error("[SubscriptionConnector] Failed to read subscription data (V2)", exception)
+        Future.failed(UnexpectedResponseError)
+      }
   }
 
 }

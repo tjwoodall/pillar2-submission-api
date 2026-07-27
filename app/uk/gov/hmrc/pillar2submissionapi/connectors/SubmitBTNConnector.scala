@@ -25,6 +25,7 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.BTNSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
 import java.net.URI
 import javax.inject.{Inject, Singleton}
@@ -41,5 +42,9 @@ class SubmitBTNConnector @Inject() (val config: AppConfig, val http: HttpClientV
       .post(URI.create(BTNSubmissionUrl).toURL)
       .withBody(Json.toJson(BTNSubmission))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[SubmitBTNConnector] Failed to submit BTN", exception)
+        Future.failed(UnexpectedResponseError)
+      }
   }
 }

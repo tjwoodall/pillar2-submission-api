@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmission
 
 import java.net.URI
@@ -37,14 +38,24 @@ class UKTaxReturnConnector @Inject() (val config: AppConfig, val http: HttpClien
   private val uktrAmendmentUrl:  String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/amend-uk-tax-return"
 
   def submitUKTR(uktrSubmission: UKTRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
-    logger.info(s"Calling pillar2 backend: $uktrSubmissionUrl")
-    val request = http.post(URI.create(uktrSubmissionUrl).toURL()).withBody(Json.toJson(uktrSubmission))
-    request.execute[HttpResponse]
+    logger.info(s"[UKTaxReturnConnector] Calling pillar2 backend: $uktrSubmissionUrl")
+    val request = http.post(URI.create(uktrSubmissionUrl).toURL).withBody(Json.toJson(uktrSubmission))
+    request
+      .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[UKTaxReturnConnector] Failed to submit UKTR", exception)
+        Future.failed(UnexpectedResponseError)
+      }
   }
 
   def amendUKTR(uktrSubmission: UKTRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
-    logger.info(s"Calling pillar2 backend: $uktrAmendmentUrl")
-    val request = http.put(URI.create(uktrAmendmentUrl).toURL()).withBody(Json.toJson(uktrSubmission))
-    request.execute[HttpResponse]
+    logger.info(s"[UKTaxReturnConnector] Calling pillar2 backend: $uktrAmendmentUrl")
+    val request = http.put(URI.create(uktrAmendmentUrl).toURL).withBody(Json.toJson(uktrSubmission))
+    request
+      .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[UKTaxReturnConnector] Failed to amend UKTR", exception)
+        Future.failed(UnexpectedResponseError)
+      }
   }
 }

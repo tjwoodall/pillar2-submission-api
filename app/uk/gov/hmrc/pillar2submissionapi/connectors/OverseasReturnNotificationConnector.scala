@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
 
 import java.net.URI
@@ -44,6 +45,10 @@ class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val 
       .post(URI.create(ORNSubmitUrl).toURL)
       .withBody(Json.toJson(ORNSubmission))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[OverseasReturnNotificationConnector] Failed to submit ORN", exception)
+        Future.failed(UnexpectedResponseError)
+      }
   }
 
   def amendORN(ORNSubmission: ORNSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
@@ -52,6 +57,10 @@ class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val 
       .put(URI.create(ORNAmendUrl).toURL)
       .withBody(Json.toJson(ORNSubmission))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[OverseasReturnNotificationConnector] Failed to amend ORN", exception)
+        Future.failed(UnexpectedResponseError)
+      }
   }
 
   def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(using hc: HeaderCarrier): Future[HttpResponse] = {
@@ -60,5 +69,9 @@ class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val 
     http
       .get(URI.create(url).toURL)
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[OverseasReturnNotificationConnector] Failed to retrieve ORN", exception)
+        Future.failed(UnexpectedResponseError)
+      }
   }
 }

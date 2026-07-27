@@ -45,13 +45,17 @@ class TestOrganisationConnector @Inject() (
       .post(URI.create(url).toURL)
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[TestOrganisationConnector] Failed to create test organisation", exception)
+        Future.failed(UnexpectedResponseError)
+      }
       .map { response =>
         response.status match {
           case 201 => Json.parse(response.body).as[TestOrganisationWithId]
           case 409 => throw OrganisationAlreadyExistsError(pillar2Id)
           case 500 => throw DatabaseError("create")
           case _   =>
-            logger.warn(s"Unexpected response from create organisation with status: ${response.status}")
+            logger.warn(s"[TestOrganisationConnector] Unexpected response from create organisation with status: ${response.status}")
             throw UnexpectedResponseError
         }
       }
@@ -64,12 +68,16 @@ class TestOrganisationConnector @Inject() (
     http
       .get(URI.create(url).toURL)
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[TestOrganisationConnector] Failed to retrieve test organisation", exception)
+        Future.failed(UnexpectedResponseError)
+      }
       .map { response =>
         response.status match {
           case 200 => Json.parse(response.body).as[TestOrganisationWithId]
           case 404 => throw OrganisationNotFoundError(pillar2Id)
           case _   =>
-            logger.warn(s"Unexpected response from get organisation with status: ${response.status}")
+            logger.warn(s"[TestOrganisationConnector] Unexpected response from get organisation with status: ${response.status}")
             throw UnexpectedResponseError
         }
       }
@@ -83,13 +91,17 @@ class TestOrganisationConnector @Inject() (
       .put(URI.create(url).toURL)
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to update test organisation", exception)
+        Future.failed(UnexpectedResponseError)
+      }
       .map { response =>
         response.status match {
           case 200 => Json.parse(response.body).as[TestOrganisationWithId]
           case 404 => throw OrganisationNotFoundError(pillar2Id)
           case 500 => throw DatabaseError("update")
           case _   =>
-            logger.warn(s"Unexpected response from update organisation with status: ${response.status}")
+            logger.warn(s"[TestOrganisationConnector] Unexpected response from update organisation with status: ${response.status}")
             throw UnexpectedResponseError
         }
       }
@@ -102,13 +114,17 @@ class TestOrganisationConnector @Inject() (
     http
       .delete(URI.create(url).toURL)
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[TestOrganisationConnector] Failed to delete test organisation", exception)
+        Future.failed(UnexpectedResponseError)
+      }
       .map { response =>
         response.status match {
           case 204 => ()
           case 404 => throw OrganisationNotFoundError(pillar2Id)
           case 500 => throw DatabaseError("Failed to delete organisation and submission data")
           case _   =>
-            logger.warn(s"Unexpected response from delete organisation with status: ${response.status}")
+            logger.warn(s"[TestOrganisationConnector] Unexpected response from delete organisation with status: ${response.status}")
             throw UnexpectedResponseError
         }
       }
