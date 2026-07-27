@@ -503,6 +503,8 @@ paths:
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSubmission"
             examples:
               AmendTestGlobeInformationReturnRequestExample:
                 $ref: "#/components/examples/requests.AmendTestGlobeInformationReturnRequestExample"
@@ -511,6 +513,8 @@ paths:
           description: Globe Information Return Amended
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSuccess"
               examples:
                 CreateTestGlobeInformationReturnResponseExample:
                   $ref: "#/components/examples/responses.AmendTestGlobeInformationReturnResponseExample"
@@ -518,6 +522,8 @@ paths:
           description: Bad Request
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid JSON:
                   $ref: "#/components/examples/errors.InvalidJson"
@@ -529,6 +535,8 @@ paths:
           description: Unauthorized
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Missing Credentials:
                   $ref: "#/components/examples/errors.MissingCredentials"
@@ -538,6 +546,8 @@ paths:
           description: Forbidden
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
@@ -545,6 +555,8 @@ paths:
           description: Unprocessable Entity
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
@@ -554,6 +566,8 @@ paths:
           description: Internal Server Error
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Generic Server Error:
                   $ref: "#/components/examples/errors.Submission.GenericServerError"
@@ -572,6 +586,8 @@ paths:
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSubmission"
             examples:
               DeleteTestGlobeInformationReturnRequestExample:
                 $ref: "#/components/examples/requests.DeleteTestGlobeInformationReturnRequestExample"
@@ -582,6 +598,8 @@ paths:
           description: Bad Request
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid JSON:
                   $ref: "#/components/examples/errors.InvalidJson"
@@ -593,6 +611,8 @@ paths:
           description: Unauthorized
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Missing Credentials:
                   $ref: "#/components/examples/errors.MissingCredentials"
@@ -602,6 +622,8 @@ paths:
           description: Forbidden
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
@@ -609,6 +631,8 @@ paths:
           description: Unprocessable Entity
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
@@ -618,6 +642,8 @@ paths:
           description: Internal Server Error
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Generic Server Error:
                   $ref: "#/components/examples/errors.Submission.GenericServerError"
@@ -2379,7 +2405,6 @@ components:
       - pillar2Id
       - organisation
     uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountActivityScenario:
-      properties: {}
       type: string
       enum:
       - DTT_CHARGE
