@@ -21,7 +21,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
-import play.api.Application
 import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
@@ -34,7 +33,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.OverseasReturnNotificationISpec.*
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
-import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.ORNDataFixtures
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNRetrieveSuccessResponse, ORNSuccessResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
@@ -43,7 +42,7 @@ import java.net.URI
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-trait OverseasReturnNotificationBehaviours extends IntegrationSpecBase with OptionValues with ORNDataFixture {
+class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionValues with ORNDataFixtures {
 
   lazy val provider:      HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:        HttpClientV2         = provider.get()
@@ -59,15 +58,8 @@ trait OverseasReturnNotificationBehaviours extends IntegrationSpecBase with Opti
   private def retrieveUrl(from: String, to: String) =
     s"/report-pillar2-top-up-taxes/overseas-return-notification/$from/$to"
 
-  def getSubscriptionStub: StubMapping = {
-    val v2Enabled = app.configuration.getOptional[Boolean]("features.readSubscriptionV2Enabled").getOrElse(false)
-
-    if v2Enabled then {
-      stubGet(s"$readSubscriptionV2Path/$plrReference", OK, subscriptionSuccessV2Json.toString)
-    } else {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
-    }
-  }
+  def getSubscriptionStub: StubMapping =
+    stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
 
   "ORNSubmissionController" when {
     "submitORN as a organisation" must {
@@ -824,16 +816,4 @@ object OverseasReturnNotificationISpec {
                  |  "TIN" : "US12345678",
                  |  "issuingCountryTIN" : "US"
                  |}""".stripMargin)
-}
-
-class OverseasReturnNotificationV1ISpec extends OverseasReturnNotificationBehaviours {
-  override lazy val app: Application =
-    guiceAppBuilder("features.readSubscriptionV2Enabled" -> false)
-      .build()
-}
-
-class OverseasReturnNotificationV2ISpec extends OverseasReturnNotificationBehaviours {
-  override lazy val app: Application =
-    guiceAppBuilder("features.readSubscriptionV2Enabled" -> true)
-      .build()
 }

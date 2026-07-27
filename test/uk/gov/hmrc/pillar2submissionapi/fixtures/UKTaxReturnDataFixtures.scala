@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.helpers
+package uk.gov.hmrc.pillar2submissionapi.fixtures
 
 import cats.data.NonEmptyList
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -25,13 +25,14 @@ import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSub
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
 import scala.math.BigDecimal
 
-trait UKTaxReturnDataFixture {
+trait UKTaxReturnDataFixtures {
 
-  val pillar2Id        = "XTC01234123412"
+  val testPillar2Id    = "XTC01234123412"
   val formBundleNumber = "119000004320"
-  val processingDate:                ZonedDateTime             = ZonedDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+  val processingDate: ZonedDateTime = ZonedDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+
   val uktrSubmissionSuccessResponse: UKTRSubmitSuccessResponse =
-    UKTRSubmitSuccessResponse(processingDate, formBundleNumber, Some(pillar2Id))
+    UKTRSubmitSuccessResponse(processingDate, formBundleNumber, Some(testPillar2Id))
 
   val liabilityNilReturn: LiabilityNilReturn = LiabilityNilReturn(NIL_RETURN)
   val liableEntity:       LiableEntity       =

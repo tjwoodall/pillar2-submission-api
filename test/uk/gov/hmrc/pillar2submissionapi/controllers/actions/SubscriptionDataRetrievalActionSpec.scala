@@ -23,14 +23,14 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
-import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.SubscriptionDataFixtures
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.NoSubscriptionDataError
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with SubscriptionDataFixture {
+class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with SubscriptionDataFixtures {
 
   class Harness(subscriptionConnector: SubscriptionConnector) extends SubscriptionDataRetrievalActionImpl(subscriptionConnector)(using ec) {
     def callTransform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] = transform(request)
@@ -38,9 +38,9 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
 
   "Subscription Data Retrieval Action" when {
     "the connector returns Right" must {
-      "build a SubscriptionData object (V1 shape) and add it to the request" in {
+      "build a SubscriptionData object and add it to the request" in {
         when(mockSubscriptionConnector.readSubscription(any[String]())(using any[HeaderCarrier](), any[ExecutionContext]()))
-          .thenReturn(Future(Right(subscriptionData)))
+          .thenReturn(Future.successful(Right(subscriptionData)))
 
         val action = new Harness(mockSubscriptionConnector)
 
@@ -49,19 +49,6 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
           .futureValue
 
         result.subscriptionData mustBe subscriptionData
-      }
-
-      "build a SubscriptionData object (V2 shape) and add it to the request" in {
-        when(mockSubscriptionConnector.readSubscription(any[String]())(using any[HeaderCarrier](), any[ExecutionContext]()))
-          .thenReturn(Future.successful(Right(subscriptionDataV2)))
-
-        val action = new Harness(mockSubscriptionConnector)
-
-        val result = action
-          .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
-          .futureValue
-
-        result.subscriptionData mustBe subscriptionDataV2
       }
     }
 

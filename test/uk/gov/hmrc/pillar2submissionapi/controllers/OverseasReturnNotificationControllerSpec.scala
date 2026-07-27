@@ -26,13 +26,13 @@ import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.OverseasReturnNotificationController
-import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.ORNDataFixtures
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBodyError, InvalidJsonError, MissingHeaderError}
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
 
 import scala.concurrent.Future
 
-class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with ORNDataFixture {
+class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with ORNDataFixtures {
 
   val ornController: OverseasReturnNotificationController =
     new OverseasReturnNotificationController(
@@ -46,13 +46,13 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
   def callWithBody(jsRequest: JsValue): Future[Result] = ornController.submitORN(
     FakeRequest()
       .withJsonBody(jsRequest)
-      .withHeaders("X-Pillar2-Id" -> pillar2Id)
+      .withHeaders("X-Pillar2-Id" -> testPillar2Id)
   )
 
   def callAmendWithBody(jsRequest: JsValue): Future[Result] = ornController.amendORN(
     FakeRequest()
       .withJsonBody(jsRequest)
-      .withHeaders("X-Pillar2-Id" -> pillar2Id)
+      .withHeaders("X-Pillar2-Id" -> testPillar2Id)
   )
 
   "OverseasReturnNotificationController" when {
@@ -99,7 +99,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
         val result: Future[Result] = ornController.submitORN(
           FakeRequest()
             .withTextBody(invalidRequest_wrongType)
-            .withHeaders("X-Pillar2-Id" -> pillar2Id)
+            .withHeaders("X-Pillar2-Id" -> testPillar2Id)
         )
         result.shouldFailWith(EmptyRequestBodyError)
       }
@@ -108,7 +108,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
     "submitORN called with no request body" should {
       "return EmptyRequestBody response" in {
         val result: Future[Result] = ornController.submitORN(
-          FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
+          FakeRequest().withHeaders("X-Pillar2-Id" -> testPillar2Id)
         )
         result.shouldFailWith(EmptyRequestBodyError)
       }
@@ -189,7 +189,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
         val result: Future[Result] = ornController.amendORN(
           FakeRequest()
             .withTextBody(invalidRequest_wrongType)
-            .withHeaders("X-Pillar2-Id" -> pillar2Id)
+            .withHeaders("X-Pillar2-Id" -> testPillar2Id)
         )
         result.shouldFailWith(EmptyRequestBodyError)
       }
@@ -198,7 +198,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
     "amendORN called with no request body" should {
       "return EmptyRequestBody response" in {
         val result: Future[Result] = ornController.amendORN(
-          FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
+          FakeRequest().withHeaders("X-Pillar2-Id" -> testPillar2Id)
         )
         result.shouldFailWith(EmptyRequestBodyError)
       }

@@ -25,10 +25,10 @@ import play.api.libs.json.Json
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.helpers.AccountActivityDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.AccountActivityDataFixtures
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
-class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivityDataFixture with ScalaFutures {
+class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivityDataFixtures with ScalaFutures {
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
@@ -41,7 +41,7 @@ class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivity
   "AccountActivityConnector" when {
     "retrieving account activity" must {
       "forward the response in the happy path" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
 
         stubRequestWithPillar2Id("GET", getUrl, OK, accountActivityJsonResponse)
 
@@ -49,11 +49,11 @@ class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivity
 
         result.status mustBe OK
         result.body mustBe Json.stringify(accountActivityJsonResponse)
-        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id)))
+        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id)))
       }
 
       "forward unhappy responses" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
 
         val serverErrorResponse = Json.obj(
           "code"    -> "500",
@@ -66,11 +66,11 @@ class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivity
 
         result.status mustBe INTERNAL_SERVER_ERROR
         result.body mustBe Json.stringify(serverErrorResponse)
-        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id)))
+        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id)))
       }
 
       "return UnexpectedResponseError when the request fails" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
 
         server.stubFor(
           get(urlEqualTo(getUrl))
@@ -80,7 +80,7 @@ class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivity
         val result = accountActivityConnector.getAccountActivity(localDateFrom, localDateTo).failed.futureValue
 
         result mustBe UnexpectedResponseError
-        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id)))
+        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id)))
       }
     }
   }

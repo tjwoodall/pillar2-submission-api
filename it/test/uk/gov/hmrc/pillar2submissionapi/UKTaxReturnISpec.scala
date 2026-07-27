@@ -22,7 +22,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
-import play.api.Application
 import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
@@ -34,8 +33,8 @@ import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
+import uk.gov.hmrc.pillar2submissionapi.fixtures.UKTRErrorCodes.INVALID_RETURN_093
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
-import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.services.UKTRSubmitErrorResponse
@@ -45,7 +44,7 @@ import java.net.URI
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
+class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
@@ -56,15 +55,8 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
   def requestWithBodyAsAgent(body: JsValue = validLiabilityReturn): RequestBuilder =
     client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken").withBody(body)
 
-  def getSubscriptionStub: StubMapping = {
-    val v2Enabled = app.configuration.getOptional[Boolean]("features.readSubscriptionV2Enabled").getOrElse(false)
-
-    if v2Enabled then {
-      stubGet(s"$readSubscriptionV2Path/$plrReference", OK, subscriptionSuccessV2Json.toString)
-    } else {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
-    }
-  }
+  def getSubscriptionStub: StubMapping =
+    stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
 
   private val submitUrl = "/report-pillar2-top-up-taxes/submit-uk-tax-return"
   private val amendUrl  = "/report-pillar2-top-up-taxes/amend-uk-tax-return"
@@ -83,7 +75,7 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(requestWithBody().execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
         server.verify(
           postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(plrReference))
@@ -101,7 +93,7 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(requestWithBody().execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -116,7 +108,7 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(requestWithBody(validNilReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -159,7 +151,7 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(requestWithBody(liabilityReturnDuplicateFields).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -262,7 +254,7 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
         val resultAsResponseModel = result.json.as[UKTRSubmitSuccessResponse]
 
         result.status mustBe CREATED
-        resultAsResponseModel.chargeReference.value mustEqual pillar2Id
+        resultAsResponseModel.chargeReference.value mustEqual testPillar2Id
         resultAsResponseModel.formBundleNumber mustEqual formBundleNumber
       }
     }
@@ -284,7 +276,7 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(amendRequest(validLiabilityReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
         server.verify(
           putRequestedFor(urlEqualTo(amendUrl)).withHeader("X-Pillar2-Id", equalTo(plrReference))
@@ -302,7 +294,7 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(amendRequest(validLiabilityReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -317,7 +309,7 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(amendRequest(validNilReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -348,7 +340,7 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(amendRequest(liabilityReturnDuplicateFields).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -461,21 +453,9 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
             client.put(URI.create(str).toURL).withBody(body).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
         val result = Await.result(amendRequest(validLiabilityReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
     }
   }
-}
-
-class UKTaxReturnV1ISpec extends UKTaxReturnBehaviours {
-  override lazy val app: Application =
-    guiceAppBuilder("features.readSubscriptionV2Enabled" -> false)
-      .build()
-}
-
-class UKTaxReturnV2ISpec extends UKTaxReturnBehaviours {
-  override lazy val app: Application =
-    guiceAppBuilder("features.readSubscriptionV2Enabled" -> true)
-      .build()
 }

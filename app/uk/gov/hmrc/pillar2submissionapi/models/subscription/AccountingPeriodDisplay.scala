@@ -18,10 +18,16 @@ package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class SubscriptionSuccess(
-  success: SubscriptionData
+import java.time.LocalDate
+
+final case class AccountingPeriodDisplay(
+  startDate:         Option[LocalDate] = None,
+  endDate:           Option[LocalDate] = None,
+  dueDate:           Option[LocalDate] = None,
+  canAmendStartDate: Option[Boolean] = Some(false),
+  canAmendEndDate:   Option[Boolean] = Some(false)
 )
 
-object SubscriptionSuccess {
-  given format: OFormat[SubscriptionSuccess] = Json.format[SubscriptionSuccess]
+object AccountingPeriodDisplay {
+  given format: OFormat[AccountingPeriodDisplay] = Json.format[AccountingPeriodDisplay]
 }

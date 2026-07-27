@@ -26,10 +26,10 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.ORNDataFixtures
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
-class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORNDataFixture {
+class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORNDataFixtures {
 
   lazy val ornConnector:          OverseasReturnNotificationConnector = app.injector.instanceOf[OverseasReturnNotificationConnector]
   override def fakeApplication(): Application                         = new GuiceApplicationBuilder()
@@ -42,14 +42,14 @@ class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORND
   "SubmitORNConnector" when {
     "submitORN" must {
       "forward the X-Pillar2-Id header" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
         stubRequestWithPillar2Id("POST", submitUrl, CREATED, JsObject.empty)
 
         val result = await(ornConnector.submitORN(ornRequestFixture))
 
         result.status should be(CREATED)
         server.verify(
-          postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+          postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id))
         )
       }
 
@@ -93,14 +93,14 @@ class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORND
   "AmendORNConnector" when {
     "amendORN" must {
       "forward the X-Pillar2-Id header" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
         stubRequestWithPillar2Id("PUT", amendUrl, OK, JsObject.empty)
 
         val result = await(ornConnector.amendORN(ornRequestFixture))
 
         result.status should be(OK)
         server.verify(
-          putRequestedFor(urlEqualTo(amendUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+          putRequestedFor(urlEqualTo(amendUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id))
         )
       }
 
