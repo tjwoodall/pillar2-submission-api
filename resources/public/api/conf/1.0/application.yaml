@@ -93,7 +93,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
-                code: 409
+                code: '409'
                 message: "Organisation with pillar2Id: XAPLR1234567890 already exists"
         "500":
           description: Internal Server Error
@@ -102,7 +102,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
-                code: 500
+                code: '500'
                 message: Failed to create organisation due to database error
       description: |
         Creates a test organisation associated with your authorised organisation.
@@ -182,7 +182,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
-                code: 500
+                code: '500'
                 message: Internal Server Error
         "400":
           description: Invalid Request
@@ -298,7 +298,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
-                code: 500
+                code: '500'
                 message: Failed to update organisation due to database error
       description: |
         Updates a test organisation associated with your authorised organisation.
@@ -371,7 +371,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
-                code: 500
+                code: '500'
                 message: Failed to delete organisation and submission data
         "400":
           description: Invalid Request
@@ -1614,7 +1614,6 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse"
                 properties:
                   success:
                     $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse"
@@ -2432,6 +2431,7 @@ components:
       - INTEREST_REPAYMENT_CREDIT
       - COMBINED_REPAYMENT
     uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData:
+      type: object
       properties:
         accountActivityScenario:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountActivityScenario"
@@ -3555,13 +3555,13 @@ components:
       summary: Liability Success response
       value:
         processingDate: 2026-06-26T09:26:17Z
-        formBundleNumber: 119000004320
-        chargeReference: 2347913284601
+        formBundleNumber: '119000004320'
+        chargeReference: '2347913284601'
     responses.UKTRSuccessResponseWithoutCrnExample:
       summary: Nil Return Success response
       value:
         processingDate: 2026-06-26T09:26:17Z
-        formBundleNumber: 119000004320
+        formBundleNumber: '119000004320'
     responses.UKTRNilReturnResponseExample:
       summary: Request example for Domestic only with UK GAAP Nil Return
       value:
@@ -3575,7 +3575,7 @@ components:
       summary: ORN Submit/Amend Success response
       value:
         processingDate: 2026-06-26T09:26:17Z
-        formBundleNumber: 119000004320
+        formBundleNumber: '119000004320'
     responses.ORNRetrieveSuccessResponseExample:
       summary: ORN Retrieve Success response
       value:
@@ -3590,7 +3590,7 @@ components:
     errors.TestOrg.NotFound:
       summary: Test organisation not found
       value:
-        code: 404
+        code: '404'
         message: "Organisation not found for pillar2Id: XAPLR1234567890"
     errors.TestOrg.EndpointDisabled:
       summary: Test endpoints not available
@@ -3650,7 +3650,7 @@ components:
     errors.Submission.GenericServerError:
       summary: Generic server error
       value:
-        code: 500
+        code: '500'
         message: An unexpected error occurred
     errors.InvalidScope:
       summary: Invalid scope
@@ -3715,7 +3715,7 @@ components:
     errors.Submission.AccountingPeriodUnderEnquiry:
       summary: Accounting Period Under Enquiry
       value:
-        code: 100
+        code: '100'
         message: Accounting period under enquiry
     errors.Submission.NoDataFound:
       summary: No data found
