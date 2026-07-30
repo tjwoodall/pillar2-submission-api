@@ -1,0 +1,50 @@
+meta {
+  name: Exchange Auth Code
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{url}}/oauth/token
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  content-type: application/x-www-form-urlencoded
+}
+
+body:form-urlencoded {
+  code: {{authCode}}
+  client_id: {{clientId}}
+  client_secret: {{clientSecret}}
+  redirect_uri: urn:ietf:wg:oauth:2.0:oob
+  grant_type: authorization_code
+}
+
+assert {
+  res.status: eq 200
+  res.body.access_token: isNotEmpty
+  res.body.refresh_token: isNotEmpty
+  res.body.scope: eq "write:pillar2 read:pillar2"
+  res.body.token_type: eq "bearer"
+}
+
+script:pre-request {
+  if (!bru.getEnvVar("clientId")) {
+    throw new Error('Please set the value of "clientId" in the environment configuration.');
+  }
+  
+  if (!bru.getEnvVar("clientSecret")) {
+    throw new Error('Please set the value of "clientSecret" in the environment configuration.');
+  }
+  
+  if (!bru.getEnvVar("authCode")) {
+    throw new Error('"authCode" not set. Run the "Get Auth Code" request first.');
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("bearerToken", "Bearer " + res.body.access_token)
+  bru.setEnvVar("refreshToken", res.body.refresh_token)
+}

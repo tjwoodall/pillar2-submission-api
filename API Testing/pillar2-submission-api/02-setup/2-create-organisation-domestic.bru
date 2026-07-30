@@ -1,0 +1,54 @@
+meta {
+  name: Create Organisation (Domestic)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{apiUrl}}/setup/organisation
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{bearerToken}}
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+body:json {
+  {
+    "orgDetails": {
+      "domesticOnly": true,
+      "organisationName": "Test Organisation Ltd",
+      "registrationDate": "2024-01-01"
+    },
+    "accountingPeriod": {
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31"
+    }
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.pillar2Id: eq {{testPlrId}}
+  res.body.organisation: isNotEmpty
+  res.body.organisation.orgDetails.domesticOnly: eq true
+  res.body.organisation.accountingPeriod: isNotEmpty
+}
+
+script:pre-request {
+  if (bru.getVar("organisationCreatedFor") === bru.getEnvVar("testPlrId")) {
+    throw new Error('Organisation already exists for ' + bru.getEnvVar("testPlrId") + '. Run the "Delete Organisation" request first.');
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201 || res.getStatus() === 409) {
+    bru.setVar("organisationCreatedFor", bru.getEnvVar("testPlrId"));
+  }
+  
+  if (res.getStatus() === 409) {
+    console.warn('Organisation already exists for ' + bru.getEnvVar("testPlrId") + '. Run the "Delete Organisation" request first.');
+  }
+}

@@ -28,8 +28,9 @@ Most of the team uses the [Bruno desktop application](https://www.usebruno.com/d
 1. Download and install Bruno from https://www.usebruno.com/downloads
 2. Open Bruno and select "Open Collection"
 3. Navigate to the `API Testing` folder and open any of the collection folders
-4. Select the `local` environment from the environment dropdown
-5. Run individual requests or use "Run Folder" to execute multiple tests
+4. Open Terminal, change to the `API Testing` directory and run `npm install` to install Playwright.
+5. Select the `local` environment from the environment dropdown
+6. Run individual requests or use "Run Folder" to execute multiple tests
 
 ### Using the Bruno CLI
 
@@ -56,7 +57,8 @@ Alternatively, you can use the Bruno CLI:
 
 The `-r` flag runs tests recursively through all subfolders.
 
-Note: The `01-auth/envs/` requests in `pillar2-submission-api` will fail when running with `--env local` as they target deployed environment URLs. This is expected.
+Note: The `01-auth/envs/` requests in `pillar2-submission-api` will fail when running with `--env local` as they
+target deployed environment URLs. This is expected.
 
 ### Prerequisites for Local Testing
 
@@ -72,7 +74,6 @@ Bruno runs tests in sequence order defined by the `seq` field in each `.bru` fil
 1. **Authentication** (`01-auth/`): Obtains bearer tokens for authenticated requests
 2. **Setup** (`02-setup/` or inline): Creates test organisations and data
 3. **Functional Tests** (`03-*/` or `99-qa/`): Tests actual API endpoints
-4. **Cleanup**: Deletes test data
 
 When running the full collection recursively, earlier tests set up data that subsequent tests depend on.
 
@@ -92,14 +93,14 @@ bru run pillar2-submission-api/99-qa/orn --env local -r
 
 The `environments/local.bru` file defines:
 
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `apiUrl` | `http://localhost:10054/pillar2/submission` | Submission API base URL |
-| `pillar2Url` | `http://localhost:10055/RESTAdapter/plr` | Pillar 2 backend URL |
-| `externalTestStubUrl` | `http://localhost:10055` | External test stub URL |
-| `authUrl` | `http://localhost:10054/pillar2/test/auth-login-stub` | Local auth endpoint |
-| `testPlrId` | `XEPLR0000000000` | Test Pillar 2 ID |
-| `bearer_token` | (set by auth script) | Authentication token |
+| Variable              | Value                                                 | Description             |
+|-----------------------|-------------------------------------------------------|-------------------------|
+| `apiUrl`              | `http://localhost:10054/pillar2/submission`           | Submission API base URL |
+| `pillar2Url`          | `http://localhost:10055/RESTAdapter/plr`              | Pillar 2 backend URL    |
+| `externalTestStubUrl` | `http://localhost:10055`                              | External test stub URL  |
+| `authUrl`             | `http://localhost:10054/pillar2/test/auth-login-stub` | Local auth endpoint     |
+| `testPlrId`           | `XEPLR0000000000`                                     | Test Pillar 2 ID        |
+| `bearerToken`         | (set by auth script)                                  | Authentication token    |
 
 ## Test Data Configuration
 
@@ -119,11 +120,11 @@ When creating or updating test organisations, you can optionally include a `test
 
 The `accountActivityScenario` field controls what financial data is returned by the Account Activity endpoint. Available scenarios are defined in the [pillar2-external-test-stub documentation](https://github.com/hmrc/pillar2-external-test-stub?tab=readme-ov-file#8-account-activity).
 
-| Scenario | Description |
-|----------|-------------|
-| `DTT_CHARGE` | Simulates a DTT charge transaction |
-| `PAYMENT_ON_ACCOUNT` | Simulates a payment on account |
-| `REPAYMENT` | Simulates a repayment transaction |
+| Scenario             | Description                        |
+|----------------------|------------------------------------|
+| `DTT_CHARGE`         | Simulates a DTT charge transaction |
+| `PAYMENT_ON_ACCOUNT` | Simulates a payment on account     |
+| `REPAYMENT`          | Simulates a repayment transaction  |
 
 > **Note**: The `testData` field is optional. If omitted, the organisation will be created without a linked activity scenario.
 
@@ -136,7 +137,7 @@ For local testing, authentication is simplified:
 1. Run the full collection from the root - the auth script runs first automatically
 2. Or manually run the `01-auth/local/create-bearer-token` request
 
-The `create-bearer-token` script uses `auth-login-stub` to generate a token and saves it to the `bearer_token` environment variable.
+The `create-bearer-token` script uses `auth-login-stub` to generate a token and saves it to the `bearerToken` environment variable.
 
 ### Deployed Environments (Development, QA, External Test)
 
@@ -148,11 +149,11 @@ For deployed environments, you need to perform the full OAuth flow:
 
 #### Step 1: Create or Obtain a User
 
-| Environment | Method |
-|-------------|--------|
-| **Development** | Run `01-auth/envs/Create Test User` |
-| **External Test** | Run `01-auth/envs/Create Test User` |
-| **QA** | Create a Government Gateway user manually via the QA frontend and register for Pillar 2 |
+| Environment       | Method                                                                                  |
+|-------------------|-----------------------------------------------------------------------------------------|
+| **Development**   | Run `01-auth/envs/Create Test User`                                                     |
+| **External Test** | Run `01-auth/envs/Create Test User`                                                     |
+| **QA**            | Create a Government Gateway user manually via the QA frontend and register for Pillar 2 |
 
 #### Step 2: Get Authorization Code
 
@@ -165,8 +166,8 @@ For deployed environments, you need to perform the full OAuth flow:
 
 1. Open `01-auth/envs/Exchange auth code`
 2. Paste the code into the request body
-3. Run the request - the script saves `bearer_token` and `refresh_token` to environment variables
+3. Run the request - the script saves `bearerToken` and `refreshToken` to environment variables
 
 #### Step 4: Refresh Token (when expired)
 
-Run `01-auth/envs/Create Refresh Token` to generate a new `bearer_token` using the saved `refresh_token`.
+Run `01-auth/envs/Create Refresh Token` to generate a new `bearerToken` using the saved `refreshToken`.
