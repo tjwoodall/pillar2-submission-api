@@ -2368,7 +2368,6 @@ components:
       - pillar2Id
       - organisation
     uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountActivityScenario:
-      properties: {}
       type: string
       enum:
       - DTT_CHARGE
