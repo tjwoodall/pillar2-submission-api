@@ -397,7 +397,7 @@ paths:
                       - COMBINED_REPAYMENT
             examples:
               UpdateTestOrganisationRequestExample:
-                $ref: '#/components/examples/requests.TestOrganisationRequestExample'
+                $ref: "#/components/examples/requests.TestOrganisationRequestExample"
       responses:
         "200":
           description: Test Organisation Updated
@@ -764,7 +764,7 @@ paths:
                       - COMBINED_REPAYMENT
             examples:
               CreateTestOrganisationRequestExample:
-                $ref: '#/components/examples/requests.TestOrganisationRequestExample'
+                $ref: "#/components/examples/requests.TestOrganisationRequestExample"
       responses:
         "201":
           description: Test Organisation Created
@@ -1151,7 +1151,7 @@ paths:
           application/json:
             examples:
               AmendTestGlobeInformationReturnRequestExample:
-                $ref: '#/components/examples/requests.AmendTestGlobeInformationReturnRequestExample'
+                $ref: "#/components/examples/requests.AmendTestGlobeInformationReturnRequestExample"
       responses:
         "200":
           description: Globe Information Return Amended
@@ -1292,7 +1292,7 @@ paths:
                   format: date
             examples:
               CreateTestGlobeInformationReturnRequestExample:
-                $ref: '#/components/examples/requests.CreateTestGlobeInformationReturnRequestExample'
+                $ref: "#/components/examples/requests.CreateTestGlobeInformationReturnRequestExample"
       responses:
         "201":
           description: Globe Information Return Created
@@ -1451,7 +1451,7 @@ paths:
           application/json:
             examples:
               DeleteTestGlobeInformationReturnRequestExample:
-                $ref: '#/components/examples/requests.DeleteTestGlobeInformationReturnRequestExample'
+                $ref: "#/components/examples/requests.DeleteTestGlobeInformationReturnRequestExample"
       responses:
         "204":
           description: Globe Information Return Deleted
@@ -1752,19 +1752,19 @@ paths:
                       For the groups which do need to submit an annual liability return, then the information found in the array will need to be populated.
             examples:
               NilReturnMneAndUk:
-                $ref: '#/components/examples/requests.UKTRNilReturnMneAndUk'
+                $ref: "#/components/examples/requests.UKTRNilReturnMneAndUk"
               NilReturnDomesticOnlyWithUkGaap:
-                $ref: '#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap'
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap"
               NilReturnDomesticOnlyWithoutUkGaap:
-                $ref: '#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap'
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap"
               LiabilityReturnMneAndUkOneEntity:
-                $ref: '#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity'
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity"
               LiabilityReturnMneAndUkTwoEntities:
-                $ref: '#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities'
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities"
               LiabilityReturnDomesticOneEntityUkGaap:
-                $ref: '#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap'
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap"
               LiabilityReturnDomesticTwoEntities:
-                $ref: '#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities'
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"
       responses:
         "200":
           description: UK Tax Return Submission Updated
@@ -2232,19 +2232,19 @@ paths:
                       For the groups which do need to submit an annual liability return, then the information found in the array will need to be populated.
             examples:
               NilReturnMneAndUk:
-                $ref: '#/components/examples/requests.UKTRNilReturnMneAndUk'
+                $ref: "#/components/examples/requests.UKTRNilReturnMneAndUk"
               NilReturnDomesticOnlyWithUkGaap:
-                $ref: '#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap'
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap"
               NilReturnDomesticOnlyWithoutUkGaap:
-                $ref: '#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap'
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap"
               LiabilityReturnMneAndUkOneEntity:
-                $ref: '#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity'
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity"
               LiabilityReturnMneAndUkTwoEntities:
-                $ref: '#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities'
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities"
               LiabilityReturnDomesticOneEntityUkGaap:
-                $ref: '#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap'
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap"
               LiabilityReturnDomesticTwoEntities:
-                $ref: '#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities'
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"
       responses:
         "201":
           description: UK Tax Return Submission Created
@@ -2534,7 +2534,7 @@ paths:
                   format: date
             examples:
               requests.BTNRequestExample:
-                $ref: '#/components/examples/requests.BTNRequestExample'
+                $ref: "#/components/examples/requests.BTNRequestExample"
       responses:
         "201":
           description: Below-Threshold Notification Submission Created
@@ -3255,7 +3255,7 @@ paths:
                     was issued.
             examples:
               requests.ORNRequestExample:
-                $ref: '#/components/examples/requests.ORNRequestExample'
+                $ref: "#/components/examples/requests.ORNRequestExample"
       responses:
         "200":
           description: Overseas Return Notification Submission Amended
@@ -3520,7 +3520,7 @@ paths:
                     was issued.
             examples:
               requests.ORNRequestExample:
-                $ref: '#/components/examples/requests.ORNRequestExample'
+                $ref: "#/components/examples/requests.ORNRequestExample"
       responses:
         "201":
           description: Overseas Return Notification Submission Created
